@@ -1,4 +1,4 @@
-def number_of_words(text):
+def word_counter(text):
     return len(text.split())
 
 line = """dhfskj
@@ -8,4 +8,4 @@ fsdfsd
 fdfdsfsd
 dfdf"""
 
-print number_of_words(line)
+print word_counter(line)

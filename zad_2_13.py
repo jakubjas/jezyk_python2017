@@ -1,4 +1,4 @@
-def words_lenght(line):
+def words_length(line):
     return sum([len(word) for word in line.split()])
 
 line = """tatarak
@@ -12,4 +12,4 @@ uzurpowac
 rekonwalescencja
 energia"""
 
-print words_lenght(line)
+print words_length(line)

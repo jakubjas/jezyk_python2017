@@ -13,5 +13,4 @@ rekonwalescencja
 energia"""
 
 print longest_word(line)
-
-#test
+print len(longest_word(line))
