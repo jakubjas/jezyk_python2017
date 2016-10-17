@@ -24,5 +24,3 @@ melancholia
 
 print first_letters(line)
 print last_letters(line2)
-
-#test komentarza
