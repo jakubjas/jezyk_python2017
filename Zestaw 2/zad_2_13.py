@@ -1,5 +1,5 @@
 def words_length(line):
-    return sum([len(word) for word in line.split()])
+    return sum(len(word) for word in line.split())
 
 line = """tatarak
 heban
