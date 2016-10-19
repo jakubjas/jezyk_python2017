@@ -2,7 +2,7 @@ def first_letters(line):
     return "".join([word[0] for word in line.split()])
 
 def last_letters(line):
-    return "".join([word[len(word)-1] for word in line.split()])
+    return "".join([word[-1] for word in line.split()])
 
 line = """tatarak
 heban
