@@ -1,7 +1,5 @@
 while True:
-
     reply = raw_input("Podaj liczbe rzeczywista: ")
-
     if reply == "stop":
         break
     try:
