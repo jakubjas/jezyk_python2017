@@ -19,5 +19,3 @@ for i in "qwerty":
 
 for i in "axby":
     print ord(i) if ord(i) < 100 else i
-
-    #
