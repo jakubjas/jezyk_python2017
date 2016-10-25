@@ -17,7 +17,29 @@ D4['C'] = 100
 D4['D'] = 500
 D4['M'] = 1000
 
-print D1
-print D2
-print D3
-print D4
+
+def roman2int(roman):
+
+    d = dict(zip(['I', 'V', 'X', 'L', 'C', 'D', 'M'], [1, 5, 10, 50, 100, 500, 1000]))
+
+    roman = roman.upper().strip()
+    integer = 0
+
+    try:
+        for i in range(len(roman)):
+            value = d[roman[i]]
+
+            if i+1 < len(roman) and d[roman[i+1]] > value:
+                integer -= value
+            else:
+                integer += value
+
+    except KeyError:
+
+        print "To nie jest poprawna liczba w zapisie rzymskim!"
+        exit()
+
+    return integer
+
+
+print roman2int('MMMCCCXXXVIII')
