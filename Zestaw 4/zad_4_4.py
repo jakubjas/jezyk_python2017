@@ -8,6 +8,7 @@ def fibonacci(n):
     prev = 1
     result = 0
 
+    # zapis w range oczywiscie mozna uproscic, jednakze pozostawiam go w tej formie dla zwiekszenia czytelnosci
     for i in range(2, n+1):
         result = prev + prev2
         prev2 = prev
