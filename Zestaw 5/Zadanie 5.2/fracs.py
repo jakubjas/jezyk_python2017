@@ -4,7 +4,7 @@ import unittest
 from fractions import gcd
 
 
-# reduces fraction: e.g. [2, 4] -> [1, 2]
+# skrocenie ulamka, np. [2, 4] -> [1, 2]
 def reduce_frac(frac):
 
     if frac[1] == 0:
