@@ -1,29 +1,29 @@
 # wersja rekurencyjna
-def list_reverse_recursive(l, left, right):
+def list_reverse_recursive(source_list, left, right):
 
     if left >= right:
         return None
 
-    l[left], l[right] = l[right], l[left]
-    list_reverse_recursive(l, left+1, right-1)
+    source_list[left], source_list[right] = source_list[right], source_list[left]
+    list_reverse_recursive(source_list, left+1, right-1)
 
 
 # wersja iteracyjna
-def list_reverse_iterative(l, left, right):
+def list_reverse_iterative(source_list, left, right):
     for i in range((right-left)/2):
-        l[left+i], l[right-i] = l[right-i], l[left+i]
+        source_list[left+i], source_list[right-i] = source_list[right-i], source_list[left+i]
 
-l1 = [1, 4, 6, 8, 10, 12, 13]
-l2 = [1, 2, 3, 4, 5, 6]
+list1 = [1, 4, 6, 8, 10, 12, 13]
+list2 = [1, 2, 3, 4, 5, 6]
 
-print l1
+print list1
 
-list_reverse_iterative(l1, 0, 2)
+list_reverse_iterative(list1, 0, 2)
 
-print l1
+print list1
 
-print l2
+print list2
 
-list_reverse_recursive(l2, 1, 4)
+list_reverse_recursive(list2, 1, 4)
 
-print l2
+print list2
