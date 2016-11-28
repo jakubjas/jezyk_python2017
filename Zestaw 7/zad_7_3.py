@@ -18,7 +18,6 @@ class Circle:
         try:
             float(value)
             return True
-
         except ValueError:
             return False
 
