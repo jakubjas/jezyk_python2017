@@ -162,3 +162,7 @@ class TestFrac(unittest.TestCase):
 
     def tearDown(self):
         del self.zero
+
+
+if __name__ == '__main__':
+    unittest.main()  # uruchamia wszystkie testy

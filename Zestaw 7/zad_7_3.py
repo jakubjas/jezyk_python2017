@@ -103,3 +103,7 @@ class TestCircle(unittest.TestCase):
         self.assertEqual(Circle(3, 1, 8).cover(Circle(3, 0, 8)), Circle(3.0, 0.5, 8.5))
         self.assertEqual(Circle(4, 6, 10).cover(Circle(4, 1, 5)), Circle(4.0, 6.0, 10.0))
         self.assertRaises(ValueError, Circle(1, 2, 3).cover, "f")
+
+
+if __name__ == '__main__':
+    unittest.main()  # uruchamia wszystkie testy
