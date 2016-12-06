@@ -42,8 +42,8 @@ def compare_exec_time(i, j):
     P_dynamic_value = P_dynamic(i, j)
     P_dynamic_exec_time = time.clock() - start
 
-    print "Wartosc zwrocona przez P(" + str(i) + ", " + str(j) + ") = " + str(P_value) + " Czas wykonania: " + str(P_exec_time)
-    print "Wartosc zwrocona przez P_dynamic(" + str(i) + ", " + str(j) + ") = " + str(P_dynamic_value) + " Czas wykonania: " + str(P_dynamic_exec_time)
+    print "Wartosc zwrocona przez P(" + str(i) + ", " + str(j) + "): " + str(P_value) + " Czas wykonania: " + str(P_exec_time)
+    print "Wartosc zwrocona przez P_dynamic(" + str(i) + ", " + str(j) + "): " + str(P_dynamic_value) + " Czas wykonania: " + str(P_dynamic_exec_time)
 
 compare_exec_time(20, 5)
 compare_exec_time(15, 12)
