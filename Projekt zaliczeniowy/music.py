@@ -27,9 +27,10 @@ class AlbumManager:
 
     def __init__(self, database='music.db'):
         self.database = DatabaseLayer(database)
+        self.create_new()
 
     def create_new(self):
-        self.database.query("CREATE TABLE Collection(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Artist TEXT NOT NULL, AlbumName TEXT NOT NULL, ReleaseYear INTEGER NOT NULL);")
+        self.database.query("CREATE TABLE IF NOT EXISTS Collection(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Artist TEXT NOT NULL, AlbumName TEXT NOT NULL, ReleaseYear INTEGER NOT NULL);")
 
     def add_album(self, artist, album_name, release_year):
         self.database.query("INSERT INTO Collection (Artist, AlbumName, ReleaseYear) VALUES (?, ?, ?)", (artist, album_name, release_year))
