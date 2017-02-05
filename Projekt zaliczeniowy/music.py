@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import sqlite3
-import curses
+import os
+
+
+def cls():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 class DatabaseLayer:
@@ -20,10 +24,21 @@ class DatabaseLayer:
         return result
 
 
-class UInterface:
+class UserInterface:
 
     def __init__(self): pass
 
+    def main_menu(self): pass
+
+    def database_menu(self): pass
+
+    def add_album_menu(self): pass
+
+    def delete_album_menu(self): pass
+
+    def search_menu(self): pass
+
+    def print_menu(self): pass
 
 
 class AlbumPrinter:
@@ -140,3 +155,5 @@ print
 
 my_collection = AlbumManager()
 AlbumPrinter.print_albums(my_collection.get_albums())
+
+cls()
