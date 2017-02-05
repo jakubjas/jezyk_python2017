@@ -2,6 +2,7 @@
 
 import sqlite3
 import os
+import math
 
 
 def cls():
@@ -24,13 +25,107 @@ class DatabaseLayer:
         return result
 
 
+class MainMenu:
+
+    def __init__(self):
+        self.header = "MAIN MENU"
+
+        self.actions = [
+            {
+                "id": 1,
+                "text": "Add album",
+                "func": self.add_album_menu
+            },
+            {
+                "id": 2,
+                "text": "Delete album",
+                "func": self.delete_album_menu
+            },
+            {
+                "id": 3,
+                "text": "Search",
+                "func": self.search_menu
+            },
+            {
+                "id": 4,
+                "text": "Print collection",
+                "func": self.print_menu
+            },
+            {
+                "id": 5,
+                "text": "Go back",
+                "func": self.database_menu
+            }
+        ]
+
+    def add_album_menu(self):
+        cls()
+        ui = UserInterface()
+        ui.menu_container()
+        self.menu_container(menu.header, menu.actions)
+
+    def delete_album_menu(self): pass
+
+    def search_menu(self): pass
+
+    def print_menu(self): pass
+
+
 class UserInterface:
 
     def __init__(self): pass
 
-    def main_menu(self): pass
+    @classmethod
+    def get_logo(cls):
+        logo = r"""
+       _    _ _                     ____  ____
+      / \  | | |__  _   _ _ __ ___ |  _ \| __ )
+     / _ \ | | '_ \| | | | '_ ` _ \| | | |  _ \
+    / ___ \| | |_) | |_| | | | | | | |_| | |_) |
+   /_/   \_\_|_.__/ \__,_|_| |_| |_|____/|____/
+                                     version 1.0"""
+        return logo
+
+    def menu_container(self, header, data):
+
+        print self.get_logo()
+
+        separator = "+"
+        separator += "-" * 50
+        separator += "+"
+
+        print separator
+
+        category = "|"
+        cat_spacer = 25 - int(math.ceil(float(len(header))/2))
+        category += " " * cat_spacer
+        category += header
+        category += " " * cat_spacer
+        if len(header) % 2:
+            category += " |"
+        else:
+            category += "|"
+
+        print category
+
+        for action in data:
+            line = "| "
+            action = "[" + str(action["id"]) + "] " + action["text"]
+            line += action
+            line += " " * (49 - len(action))
+            line += "|"
+            print line
+
+        print separator
+
+    def main_menu(self):
+        cls()
+        menu = MainMenu()
+        self.menu_container(menu.header, menu.actions)
 
     def database_menu(self): pass
+
+    def create_new_database(self): pass
 
     def add_album_menu(self): pass
 
@@ -113,47 +208,7 @@ class AlbumManager:
     def get_by_year(self, release_year, key='Artist'):
         return self.database.query("SELECT Artist, AlbumName, ReleaseYear FROM Collection WHERE ReleaseYear=? ORDER BY " + key, (release_year,))
 
-
-logo = r"""
-       _    _ _                     ____  ____
-      / \  | | |__  _   _ _ __ ___ |  _ \| __ )
-     / _ \ | | '_ \| | | | '_ ` _ \| | | |  _ \
-    / ___ \| | |_) | |_| | | | | | | |_| | |_) |
-   /_/   \_\_|_.__/ \__,_|_| |_| |_|____/|____/
-                                     version 1.0"""
-
-
-print logo
-
-separator = "+"
-separator += "-" * 50
-separator += "+"
-print separator
-
-actions = [
-    "[1] Create a new database",
-    "[2] Open existing database",
-    "[3] Add album",
-    "[4] Delete album",
-    "[5] Search",
-    "[6] Print collection",
-    "[7] By release year",
-    "[8] Delete all albums by...",
-    "[9] Go back"
-]
-
-for action in actions:
-    line = "| "
-    line += action
-    line += " " * (49-len(action))
-    line += "|"
-    print line
-
-print separator
-
-print
-
+AlbumDB = UserInterface()
+AlbumDB.main_menu()
 my_collection = AlbumManager()
 AlbumPrinter.print_albums(my_collection.get_albums())
-
-cls()
