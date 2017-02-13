@@ -57,6 +57,10 @@ class MenuBase:
 
         print category
 
+        blank_line = "|" + 50 * " " + "|"
+
+        print blank_line
+
         for action in self.actions:
             line = "| "
             action = "[" + str(action["id"]) + "] " + action["text"]
@@ -67,15 +71,16 @@ class MenuBase:
 
         print separator
 
-    def print_action_bar(self, action_name):
+    @classmethod
+    def print_action_header(cls, action_name):
         spacer = 25 - int(math.ceil(float(len(action_name))/2))
 
-        text = "=" * spacer
-        text += " " + action_name + " "
-        text += "=" * spacer
-        text += "\n"
+        header = "=" * spacer
+        header += " " + action_name + " "
+        header += "=" * spacer
+        header += "\n"
 
-        print text
+        print header
 
 
 class DatabaseMenu(MenuBase):
@@ -90,26 +95,92 @@ class DatabaseMenu(MenuBase):
             },
             {
                 "id": 2,
+                "text": "Delete database",
+                "func": self.delete_database
+            },
+            {
+                "id": 3,
                 "text": "Load database",
                 "func": self.load_database
             }
         ]
-    
-    def create_database(self):
-        name = raw_input("Specify database name (default: music.db): ")
+
+    @classmethod
+    def create_database(cls):
+        name = raw_input("Specify database name (default: music.db): ") or "music.db"
         ApplicationState.album_manager = AlbumManager(name)
         return MainMenu
 
-    def load_database(self):
-        name = raw_input("Specify database name (default: music.db): ")
+    @classmethod
+    def delete_database(cls):
 
-        if not os.path.exists(name):
-            print "No such database has been found."
-            return None
+        files = []
 
-        ApplicationState.album_manager = AlbumManager(name)
+        for f in os.listdir("."):
+            if f.endswith(".db"):
+                files.append(f)
 
-        return MainMenu
+        if not files:
+            print "No database files found."
+
+            raw_input("\nPress ENTER to go back to the previous menu... ")
+
+            return DatabaseMenu
+
+        else:
+            print "Databases found: "
+
+            for f in files:
+                print(f)
+
+            print
+
+            name = raw_input("Specify database name (default: music.db - type 'exit' to abort): ") or "music.db"
+
+            if name == 'exit':
+                return DatabaseMenu
+            elif not os.path.exists(name):
+                print "The specified file does not exist.\n"
+                return None
+
+            os.remove(name)
+            return DatabaseMenu
+
+    @classmethod
+    def load_database(cls):
+
+        files = []
+
+        for f in os.listdir("."):
+            if f.endswith(".db"):
+                files.append(f)
+
+        if not files:
+            print "No database files found."
+
+            raw_input("\nPress ENTER to go back to the previous menu... ")
+
+            return DatabaseMenu
+
+        else:
+            print "Databases found: "
+
+            for f in files:
+                print(f)
+
+            print
+
+            name = raw_input("Specify database name (default: music.db - type 'exit' to abort): ") or "music.db"
+
+            if name == 'exit':
+                return DatabaseMenu
+            elif not os.path.exists(name):
+                print "The specified file does not exist.\n"
+                return None
+
+            ApplicationState.album_manager = AlbumManager(name)
+
+            return MainMenu
 
 
 class MainMenu(MenuBase):
@@ -136,7 +207,7 @@ class MainMenu(MenuBase):
             {
                 "id": 4,
                 "text": "Print collection",
-                "func": self.print_menu
+                "func": self.print_collection_menu
             },
             {
                 "id": 5,
@@ -145,40 +216,113 @@ class MainMenu(MenuBase):
             }
         ]
 
-    def add_album_menu(self):
-        return TestMenu
+    @classmethod
+    def add_album_menu(cls):
+
+        while True:
+            artist = raw_input("Artist: ")
+
+            if artist:
+                break
+
+        while True:
+            album_name = raw_input("Album name: ")
+
+            if album_name:
+                break
+
+        while True:
+            release_year = raw_input("Release year: ")
+
+            if release_year.isdigit():
+                break
+
+        AlbumManager.add_album(ApplicationState.album_manager, artist, album_name, release_year)
+        return MainMenu
 
     def delete_album_menu(self): pass
 
+    @classmethod
+    def print_collection_menu(cls):
+        return PrintCollection
+
     def search_menu(self): pass
 
-    def database_menu(self): pass
 
+class DeleteAlbum(MenuBase):
 
-class TestMenu(MenuBase):
-    
     def __init__(self):
-        self.header = "TEST MENU"
+        self.header = "DELETE ALBUM"
 
         self.actions = [
             {
                 "id": 1,
-                "text": "Ziemniak",
-                "func": self.ziemniak
+                "text": "Sorted by artist",
+                "func": self.sorted_by_artist
             },
             {
                 "id": 2,
-                "text": "frytki",
-                "func": self.frytki
+                "text": "Sorted by album name",
+                "func": self.sorted_by_album
+            },
+            {
+                "id": 3,
+                "text": "Sorted by release year",
+                "func": self.sorted_by_year
+            },
+            {
+                "id": 4,
+                "text": "Go back",
+                "func": lambda: MainMenu
             }
         ]
 
-    def ziemniak(self):
-        return MainMenu
 
-    def frytki(self):
-        print "lol"
-        return MainMenu
+class PrintCollection(MenuBase):
+    
+    def __init__(self):
+        self.header = "PRINT MENU"
+
+        self.actions = [
+            {
+                "id": 1,
+                "text": "Sorted by artist",
+                "func": self.sorted_by_artist
+            },
+            {
+                "id": 2,
+                "text": "Sorted by album name",
+                "func": self.sorted_by_album
+            },
+            {
+                "id": 3,
+                "text": "Sorted by release year",
+                "func": self.sorted_by_year
+            },
+            {
+                "id": 4,
+                "text": "Go back",
+                "func": lambda: MainMenu
+            }
+        ]
+
+    @classmethod
+    def sorted_by_artist(cls):
+        AlbumPrinter.print_albums(AlbumManager.get_albums(ApplicationState.album_manager))
+        raw_input("\nPress ENTER to go back to the previous menu... ")
+        return PrintCollection
+
+    @classmethod
+    def sorted_by_album(cls):
+        AlbumPrinter.print_albums(AlbumManager.get_albums(ApplicationState.album_manager, 'AlbumName'))
+        raw_input("\nPress ENTER to go back to the previous menu... ")
+        return PrintCollection
+
+    @classmethod
+    def sorted_by_year(cls):
+        AlbumPrinter.print_albums(AlbumManager.get_albums(ApplicationState.album_manager, 'ReleaseYear'))
+        raw_input("\nPress ENTER to go back to the previous menu... ")
+        return PrintCollection
 
 
 class UserInterface:
@@ -197,16 +341,16 @@ class UserInterface:
     @classmethod
     def perform_actions(cls):
         while True:
-            action_id = raw_input("\nEnter your choice : ")
+            action_id = raw_input("\nEnter your choice: ")
             action = cls.current_menu.get_action(action_id)
 
             if action is not None:
-                break 
+                break
             
             print "Index out of range"
 
         cls.clear_screen()
-        cls.current_menu.print_action_bar(action["text"])
+        cls.current_menu.print_action_header(action["text"])
 
         new_menu = None
 
@@ -217,7 +361,6 @@ class UserInterface:
             new_menu = action["func"]()
 
         cls.change_menu(new_menu())
-
 
     @classmethod
     def print_logo(cls):
@@ -242,8 +385,8 @@ class AlbumManager:
         self.database = DatabaseLayer(database)
         self.database.query("CREATE TABLE IF NOT EXISTS Collection(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Artist TEXT NOT NULL, AlbumName TEXT NOT NULL, ReleaseYear INTEGER NOT NULL)")
 
-    def reset(self):
-        self.database.query("DELETE FROM Collection")
+    def delete_database(self):
+        self.database.query("DROP DATABASE Collection")
 
     def add_album(self, artist, album_name, release_year):
         self.database.query("INSERT INTO Collection (Artist, AlbumName, ReleaseYear) VALUES (?, ?, ?)", (artist, album_name, release_year))
@@ -277,7 +420,7 @@ class AlbumPrinter:
         data = list(data)
 
         if not data:
-            print "\nDatabase is empty"
+            print "Database is empty."
             return
 
         header = ["Artist", "Album name", "Release year"]
