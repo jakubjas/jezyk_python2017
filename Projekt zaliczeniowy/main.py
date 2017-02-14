@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import sqlite3
 import math
 from itertools import *
@@ -57,9 +58,7 @@ class MenuBase:
 
         print category
 
-        blank_line = "|" + 50 * " " + "|"
-
-        print blank_line
+        print "|" + 50 * " " + "|"
 
         for action in self.actions:
             line = "| "
@@ -102,6 +101,11 @@ class DatabaseMenu(MenuBase):
                 "id": 3,
                 "text": "Load database",
                 "func": self.load_database
+            },
+            {
+                "id": 4,
+                "text": "Exit",
+                "func": lambda: sys.exit(0)
             }
         ]
 
@@ -122,9 +126,7 @@ class DatabaseMenu(MenuBase):
 
         if not files:
             print "No database files found."
-
             raw_input("\nPress ENTER to go back to the previous menu... ")
-
             return DatabaseMenu
 
         else:
@@ -139,6 +141,7 @@ class DatabaseMenu(MenuBase):
 
             if name == 'exit':
                 return DatabaseMenu
+
             elif not os.path.exists(name):
                 print "The specified file does not exist.\n"
                 return None
@@ -157,9 +160,7 @@ class DatabaseMenu(MenuBase):
 
         if not files:
             print "No database files found."
-
             raw_input("\nPress ENTER to go back to the previous menu... ")
-
             return DatabaseMenu
 
         else:
@@ -174,12 +175,12 @@ class DatabaseMenu(MenuBase):
 
             if name == 'exit':
                 return DatabaseMenu
+
             elif not os.path.exists(name):
                 print "The specified file does not exist.\n"
                 return None
 
             ApplicationState.album_manager = AlbumManager(name)
-
             return MainMenu
 
 
@@ -187,7 +188,6 @@ class MainMenu(MenuBase):
 
     def __init__(self):
         self.header = "MAIN MENU"
-
         self.actions = [
             {
                 "id": 1,
@@ -211,8 +211,13 @@ class MainMenu(MenuBase):
             },
             {
                 "id": 5,
-                "text": "Go back",
-                "func": lambda: DatabaseMenu
+                "text": "Database manager",
+                "func": self.database_manager
+            },
+            {
+                "id": 6,
+                "text": "Exit",
+                "func": lambda: sys.exit(0)
             }
         ]
 
@@ -240,35 +245,95 @@ class MainMenu(MenuBase):
         AlbumManager.add_album(ApplicationState.album_manager, artist, album_name, release_year)
         return MainMenu
 
-    def delete_album_menu(self): pass
+    @classmethod
+    def delete_album_menu(cls):
+        return DeleteMenu
 
     @classmethod
     def print_collection_menu(cls):
         return PrintCollection
 
-    def search_menu(self): pass
+    @classmethod
+    def database_manager(cls):
+        return DatabaseMenu
+
+    @classmethod
+    def search_menu(cls):
+        return SearchMenu
 
 
-class DeleteAlbum(MenuBase):
+class DeleteMenu(MenuBase):
 
     def __init__(self):
         self.header = "DELETE ALBUM"
-
         self.actions = [
             {
                 "id": 1,
-                "text": "Sorted by artist",
-                "func": self.sorted_by_artist
+                "text": "Delete a single release",
+                "func": self.delete_a_single_release
             },
             {
                 "id": 2,
-                "text": "Sorted by album name",
-                "func": self.sorted_by_album
+                "text": "Delete all albums by an artist",
+                "func": self.delete_all_by_artist
             },
             {
                 "id": 3,
-                "text": "Sorted by release year",
-                "func": self.sorted_by_year
+                "text": "Go back",
+                "func": lambda: MainMenu
+            }
+        ]
+
+    @classmethod
+    def delete_a_single_release(cls):
+
+        while True:
+            artist = raw_input("Artist: ")
+
+            if artist:
+                break
+
+        while True:
+            album_name = raw_input("Album name: ")
+
+            if album_name:
+                break
+
+        AlbumManager.delete_album(ApplicationState.album_manager, artist, album_name)
+        return MainMenu
+
+    @classmethod
+    def delete_all_by_artist(cls):
+
+        while True:
+            artist = raw_input("Artist: ")
+
+            if artist:
+                break
+
+        AlbumManager.delete_all_by_artist(ApplicationState.album_manager, artist)
+        return MainMenu
+
+
+class SearchMenu(MenuBase):
+
+    def __init__(self):
+        self.header = "SEARCH MENU"
+        self.actions = [
+            {
+                "id": 1,
+                "text": "Search by artist",
+                "func": self.search_by_artist
+            },
+            {
+                "id": 2,
+                "text": "Search by album name",
+                "func": self.search_by_album
+            },
+            {
+                "id": 3,
+                "text": "Search by release year",
+                "func": self.search_by_year
             },
             {
                 "id": 4,
@@ -277,12 +342,56 @@ class DeleteAlbum(MenuBase):
             }
         ]
 
+    @classmethod
+    def search_by_artist(cls):
+
+        while True:
+            artist = raw_input("Artist: ")
+
+            if artist:
+                break
+
+        print
+
+        AlbumPrinter.print_albums(AlbumManager.get_by_artist(ApplicationState.album_manager, artist))
+        raw_input("\nPress ENTER to go back to the previous menu... ")
+        return SearchMenu
+
+    @classmethod
+    def search_by_album(cls):
+
+        while True:
+            album_name = raw_input("Album name: ")
+
+            if album_name:
+                break
+
+        print
+
+        AlbumPrinter.print_albums(AlbumManager.get_by_name(ApplicationState.album_manager, album_name))
+        raw_input("\nPress ENTER to go back to the previous menu... ")
+        return SearchMenu
+
+    @classmethod
+    def search_by_year(cls):
+
+        while True:
+            release_year = raw_input("Release year: ")
+
+            if release_year.isdigit():
+                break
+
+        print
+
+        AlbumPrinter.print_albums(AlbumManager.get_by_year(ApplicationState.album_manager, release_year))
+        raw_input("\nPress ENTER to go back to the previous menu... ")
+        return SearchMenu
+
 
 class PrintCollection(MenuBase):
     
     def __init__(self):
         self.header = "PRINT MENU"
-
         self.actions = [
             {
                 "id": 1,
@@ -340,6 +449,7 @@ class UserInterface:
 
     @classmethod
     def perform_actions(cls):
+
         while True:
             action_id = raw_input("\nEnter your choice: ")
             action = cls.current_menu.get_action(action_id)
@@ -379,40 +489,9 @@ class UserInterface:
         cls.print_logo()
 
 
-class AlbumManager:
-
-    def __init__(self, database='music.db'):
-        self.database = DatabaseLayer(database)
-        self.database.query("CREATE TABLE IF NOT EXISTS Collection(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Artist TEXT NOT NULL, AlbumName TEXT NOT NULL, ReleaseYear INTEGER NOT NULL)")
-
-    def delete_database(self):
-        self.database.query("DROP DATABASE Collection")
-
-    def add_album(self, artist, album_name, release_year):
-        self.database.query("INSERT INTO Collection (Artist, AlbumName, ReleaseYear) VALUES (?, ?, ?)", (artist, album_name, release_year))
-
-    def delete_album(self, artist, album_name, release_year):
-        self.database.query("DELETE FROM Collection WHERE Artist=? AND AlbumName=? AND ReleaseYear=?", (artist, album_name, release_year))
-
-    def delete_all_by_artist(self, artist):
-        self.database.query("DELETE FROM Collection WHERE Artist=?", (artist, ))
-
-    def get_albums(self, key='Artist'):
-        return self.database.query("SELECT Artist, AlbumName, ReleaseYear FROM Collection ORDER BY " + key)
-
-    def get_by_artist(self, artist, key='ReleaseYear'):
-        return self.database.query("SELECT Artist, AlbumName, ReleaseYear FROM Collection WHERE Artist=? ORDER BY " + key, (artist, ))
-
-    def get_by_name(self, album_name, key='Artist'):
-        return self.database.query("SELECT Artist, AlbumName, ReleaseYear FROM Collection WHERE AlbumName=? ORDER BY " + key, (album_name,))
-
-    def get_by_year(self, release_year, key='Artist'):
-        return self.database.query("SELECT Artist, AlbumName, ReleaseYear FROM Collection WHERE ReleaseYear=? ORDER BY " + key, (release_year,))
-
-
 class AlbumPrinter:
-    def __init__(self):
-        pass
+
+    def __init__(self): pass
 
     @classmethod
     def print_albums(cls, data):
@@ -420,7 +499,7 @@ class AlbumPrinter:
         data = list(data)
 
         if not data:
-            print "Database is empty."
+            print "No results."
             return
 
         header = ["Artist", "Album name", "Release year"]
@@ -451,5 +530,35 @@ class AlbumPrinter:
 
         print separator
 
+
+class AlbumManager:
+
+    def __init__(self, database='music.db'):
+        self.database = DatabaseLayer(database)
+        self.database.query("CREATE TABLE IF NOT EXISTS Collection(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, Artist TEXT NOT NULL, AlbumName TEXT NOT NULL, ReleaseYear INTEGER NOT NULL)")
+
+    def delete_database(self):
+        self.database.query("DROP DATABASE Collection")
+
+    def add_album(self, artist, album_name, release_year):
+        self.database.query("INSERT INTO Collection (Artist, AlbumName, ReleaseYear) VALUES (?, ?, ?)", (artist, album_name, release_year))
+
+    def delete_album(self, artist, album_name):
+        self.database.query("DELETE FROM Collection WHERE Artist=? AND AlbumName=?", (artist, album_name))
+
+    def delete_all_by_artist(self, artist):
+        self.database.query("DELETE FROM Collection WHERE Artist=?", (artist, ))
+
+    def get_albums(self, key='Artist'):
+        return self.database.query("SELECT Artist, AlbumName, ReleaseYear FROM Collection ORDER BY " + key)
+
+    def get_by_artist(self, artist, key='ReleaseYear'):
+        return self.database.query("SELECT Artist, AlbumName, ReleaseYear FROM Collection WHERE Artist=? ORDER BY " + key, (artist, ))
+
+    def get_by_name(self, album_name, key='Artist'):
+        return self.database.query("SELECT Artist, AlbumName, ReleaseYear FROM Collection WHERE AlbumName=? ORDER BY " + key, (album_name,))
+
+    def get_by_year(self, release_year, key='Artist'):
+        return self.database.query("SELECT Artist, AlbumName, ReleaseYear FROM Collection WHERE ReleaseYear=? ORDER BY " + key, (release_year,))
 
 UserInterface.change_menu(DatabaseMenu())
