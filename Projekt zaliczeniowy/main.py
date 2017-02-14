@@ -8,6 +8,7 @@ from itertools import *
 
 
 class ApplicationState:
+    """ Stores current application state """
 
     def __init__(self): pass
 
@@ -15,11 +16,13 @@ class ApplicationState:
 
 
 class DatabaseLayer:
+    """ Provides a layer for communication with the database """
 
     def __init__(self, database='music.db'):
         self.database = database
 
     def query(self, statements, data=()):
+        """ Method used for querying the database """
         with sqlite3.connect(self.database) as connection:
             connection.text_factory = lambda x: unicode(x, "utf-8", "ignore")
             connection.row_factory = sqlite3.Row
@@ -31,17 +34,20 @@ class DatabaseLayer:
 
 
 class MenuBase:
+    """ Represents basic functionality of each menu view """
     
     def __init__(self):
         self.header = ""
         self.actions = []
 
     def get_action(self, action_id):
+        """ Returns an action for a specified option """
         action_id = int(action_id)
         action = list(ifilter(lambda a: a["id"] == action_id, self.actions))
         return action[0] if len(action) else None
 
     def print_menu(self):
+        """ Self-explanatory - prints the menu """
         separator = "+" + "-" * 50 + "+"
         print separator
 
@@ -72,6 +78,7 @@ class MenuBase:
 
     @classmethod
     def print_action_header(cls, action_name):
+        """ Prints header for a specified option """
         spacer = 25 - int(math.ceil(float(len(action_name))/2))
 
         header = "=" * spacer
@@ -83,6 +90,8 @@ class MenuBase:
 
 
 class DatabaseMenu(MenuBase):
+    """ This menu includes the most common operations
+        for working with databases """
 
     def __init__(self):
         self.header = "DATABASE MENU"
@@ -111,12 +120,14 @@ class DatabaseMenu(MenuBase):
 
     @classmethod
     def create_database(cls):
+        """ Allows user to create database with a specified name """
         name = raw_input("Specify database name (default: music.db): ") or "music.db"
         ApplicationState.album_manager = AlbumManager(name)
         return MainMenu
 
     @classmethod
     def delete_database(cls):
+        """ Allows user to delete database with a specified name """
 
         files = []
 
@@ -151,6 +162,7 @@ class DatabaseMenu(MenuBase):
 
     @classmethod
     def load_database(cls):
+        """ Allows user to load database with a specified name """
 
         files = []
 
@@ -185,6 +197,7 @@ class DatabaseMenu(MenuBase):
 
 
 class MainMenu(MenuBase):
+    """ Main menu view """
 
     def __init__(self):
         self.header = "MAIN MENU"
@@ -223,6 +236,7 @@ class MainMenu(MenuBase):
 
     @classmethod
     def add_album_menu(cls):
+        """ Method used for adding new albums to the existing database """
 
         while True:
             artist = raw_input("Artist: ")
@@ -247,22 +261,27 @@ class MainMenu(MenuBase):
 
     @classmethod
     def delete_album_menu(cls):
+        """ Switches the view to Delete Album """
         return DeleteMenu
 
     @classmethod
     def print_collection_menu(cls):
+        """ Switches the view to Print Collection """
         return PrintCollection
 
     @classmethod
     def database_manager(cls):
+        """ Switches the view to Database Manager """
         return DatabaseMenu
 
     @classmethod
     def search_menu(cls):
+        """ Switches the view to Search Menu """
         return SearchMenu
 
 
 class DeleteMenu(MenuBase):
+    """ This menu includes options for deleting single or multiple albums """
 
     def __init__(self):
         self.header = "DELETE ALBUM"
@@ -286,6 +305,7 @@ class DeleteMenu(MenuBase):
 
     @classmethod
     def delete_a_single_release(cls):
+        """ Allows user to delete a single album from the database """
 
         while True:
             artist = raw_input("Artist: ")
@@ -304,6 +324,7 @@ class DeleteMenu(MenuBase):
 
     @classmethod
     def delete_all_by_artist(cls):
+        """ Allows user to delete all albums by a specified artist """
 
         while True:
             artist = raw_input("Artist: ")
@@ -316,6 +337,7 @@ class DeleteMenu(MenuBase):
 
 
 class SearchMenu(MenuBase):
+    """ Search Menu delivers various methods for filtering the database """
 
     def __init__(self):
         self.header = "SEARCH MENU"
@@ -344,6 +366,7 @@ class SearchMenu(MenuBase):
 
     @classmethod
     def search_by_artist(cls):
+        """ Allows user to filter the database by artist """
 
         while True:
             artist = raw_input("Artist: ")
@@ -359,6 +382,7 @@ class SearchMenu(MenuBase):
 
     @classmethod
     def search_by_album(cls):
+        """ Allows user to filter the database by album name """
 
         while True:
             album_name = raw_input("Album name: ")
@@ -374,6 +398,7 @@ class SearchMenu(MenuBase):
 
     @classmethod
     def search_by_year(cls):
+        """ Allows user to filter the database by release year """
 
         while True:
             release_year = raw_input("Release year: ")
@@ -389,6 +414,7 @@ class SearchMenu(MenuBase):
 
 
 class PrintCollection(MenuBase):
+    """ This menu delivers various methods for printing the database """
     
     def __init__(self):
         self.header = "PRINT MENU"
@@ -417,24 +443,28 @@ class PrintCollection(MenuBase):
 
     @classmethod
     def sorted_by_artist(cls):
+        """ Allows user to print the albums sorted by artist """
         AlbumPrinter.print_albums(AlbumManager.get_albums(ApplicationState.album_manager))
         raw_input("\nPress ENTER to go back to the previous menu... ")
         return PrintCollection
 
     @classmethod
     def sorted_by_album(cls):
+        """ Allows user to print the albums sorted by album name """
         AlbumPrinter.print_albums(AlbumManager.get_albums(ApplicationState.album_manager, 'AlbumName'))
         raw_input("\nPress ENTER to go back to the previous menu... ")
         return PrintCollection
 
     @classmethod
     def sorted_by_year(cls):
+        """ Allows user to print the albums sorted by release year """
         AlbumPrinter.print_albums(AlbumManager.get_albums(ApplicationState.album_manager, 'ReleaseYear'))
         raw_input("\nPress ENTER to go back to the previous menu... ")
         return PrintCollection
 
 
 class UserInterface:
+    """ Main class for maintaining the user interface """
     
     current_menu = None
 
@@ -442,6 +472,7 @@ class UserInterface:
 
     @classmethod
     def change_menu(cls, new_menu):
+        """ Method used for switching menu views """
         cls.current_menu = new_menu
         cls.clear_screen()
         cls.current_menu.print_menu()
@@ -449,6 +480,7 @@ class UserInterface:
 
     @classmethod
     def perform_actions(cls):
+        """ Method used for performing actions linked to the given menu options """
 
         while True:
             action_id = raw_input("\nEnter your choice: ")
@@ -474,6 +506,8 @@ class UserInterface:
 
     @classmethod
     def print_logo(cls):
+        """ Prints the application logo """
+
         print r"""
        _    _ _                     ____  ____
       / \  | | |__  _   _ _ __ ___ |  _ \| __ )
@@ -485,11 +519,14 @@ class UserInterface:
 
     @classmethod
     def clear_screen(cls):
+        """ Method used for clearing the console screen """
         os.system('cls' if os.name == 'nt' else 'clear')
         cls.print_logo()
 
 
 class AlbumPrinter:
+    """ This class offers functionality required for printing
+        the database contents """
 
     def __init__(self): pass
 
@@ -532,6 +569,7 @@ class AlbumPrinter:
 
 
 class AlbumManager:
+    """ This class offers all methods related to the management of the database contents """
 
     def __init__(self, database='music.db'):
         self.database = DatabaseLayer(database)
