@@ -23,6 +23,7 @@ class DatabaseLayer:
 
     def query(self, statements, data=()):
         """ Method used for querying the database """
+
         with sqlite3.connect(self.database) as connection:
             connection.text_factory = lambda x: unicode(x, "utf-8", "ignore")
             connection.row_factory = sqlite3.Row
@@ -42,12 +43,14 @@ class MenuBase:
 
     def get_action(self, action_id):
         """ Returns an action for a specified option """
+
         action_id = int(action_id)
         action = list(ifilter(lambda a: a["id"] == action_id, self.actions))
         return action[0] if len(action) else None
 
     def print_menu(self):
         """ Self-explanatory - prints the menu """
+
         separator = "+" + "-" * 50 + "+"
         print separator
 
@@ -79,6 +82,7 @@ class MenuBase:
     @classmethod
     def print_action_header(cls, action_name):
         """ Prints header for a specified option """
+
         spacer = 25 - int(math.ceil(float(len(action_name))/2))
 
         header = "=" * spacer
@@ -121,7 +125,12 @@ class DatabaseMenu(MenuBase):
     @classmethod
     def create_database(cls):
         """ Allows user to create database with a specified name """
-        name = raw_input("Specify database name (default: music.db): ") or "music.db"
+
+        name = raw_input("Specify database name (default: music.db) - type 'exit' to abort): ") or "music.db"
+
+        if name == 'exit':
+            return DatabaseMenu
+
         ApplicationState.album_manager = AlbumManager(name)
         return MainMenu
 
@@ -444,6 +453,7 @@ class PrintCollection(MenuBase):
     @classmethod
     def sorted_by_artist(cls):
         """ Allows user to print the albums sorted by artist """
+
         AlbumPrinter.print_albums(AlbumManager.get_albums(ApplicationState.album_manager))
         raw_input("\nPress ENTER to go back to the previous menu... ")
         return PrintCollection
@@ -451,6 +461,7 @@ class PrintCollection(MenuBase):
     @classmethod
     def sorted_by_album(cls):
         """ Allows user to print the albums sorted by album name """
+
         AlbumPrinter.print_albums(AlbumManager.get_albums(ApplicationState.album_manager, 'AlbumName'))
         raw_input("\nPress ENTER to go back to the previous menu... ")
         return PrintCollection
@@ -458,6 +469,7 @@ class PrintCollection(MenuBase):
     @classmethod
     def sorted_by_year(cls):
         """ Allows user to print the albums sorted by release year """
+
         AlbumPrinter.print_albums(AlbumManager.get_albums(ApplicationState.album_manager, 'ReleaseYear'))
         raw_input("\nPress ENTER to go back to the previous menu... ")
         return PrintCollection
@@ -473,6 +485,7 @@ class UserInterface:
     @classmethod
     def change_menu(cls, new_menu):
         """ Method used for switching menu views """
+
         cls.current_menu = new_menu
         cls.clear_screen()
         cls.current_menu.print_menu()
@@ -520,6 +533,7 @@ class UserInterface:
     @classmethod
     def clear_screen(cls):
         """ Method used for clearing the console screen """
+
         os.system('cls' if os.name == 'nt' else 'clear')
         cls.print_logo()
 
