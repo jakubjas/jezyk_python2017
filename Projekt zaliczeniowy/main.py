@@ -34,7 +34,7 @@ class DatabaseLayer:
         return result
 
 
-class MenuBase:
+class BaseMenu:
     """ Represents basic functionality of each menu view """
     
     def __init__(self):
@@ -93,7 +93,7 @@ class MenuBase:
         print header
 
 
-class DatabaseMenu(MenuBase):
+class DatabaseMenu(BaseMenu):
     """ This menu includes the most common operations
         for working with databases """
 
@@ -205,7 +205,7 @@ class DatabaseMenu(MenuBase):
             return MainMenu
 
 
-class MainMenu(MenuBase):
+class MainMenu(BaseMenu):
     """ Main menu view """
 
     def __init__(self):
@@ -289,7 +289,7 @@ class MainMenu(MenuBase):
         return SearchMenu
 
 
-class DeleteMenu(MenuBase):
+class DeleteMenu(BaseMenu):
     """ This menu includes options for deleting single or multiple albums """
 
     def __init__(self):
@@ -345,7 +345,7 @@ class DeleteMenu(MenuBase):
         return MainMenu
 
 
-class SearchMenu(MenuBase):
+class SearchMenu(BaseMenu):
     """ Search Menu delivers various methods for filtering the database """
 
     def __init__(self):
@@ -422,7 +422,7 @@ class SearchMenu(MenuBase):
         return SearchMenu
 
 
-class PrintCollection(MenuBase):
+class PrintCollection(BaseMenu):
     """ This menu delivers various methods for printing the database """
     
     def __init__(self):
