@@ -1,5 +1,3 @@
-# Język Python - rozwiązania zadań
+# jezyk_python2017
 
-<strong>Autor</strong>: Jakub Jas
-
-Repozytorium zawiera moje rozwiązania zestawów zadań z przedmiotu Język Python, których treść jest dostępna pod adresem: http://users.uj.edu.pl/~ufkapano/algorytmy
+This repository consists of my solutions to all the assignments given in Algorithms and Data Structures with Python course at Jagiellonian University.
